@@ -1,0 +1,54 @@
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
+import { Pokemon } from "../types"
+import axios from "axios"
+
+type State = { [key: number]: Pokemon }
+
+const pokaxios = axios.create({
+  baseURL: "https://pokeapi.co/api/v2"
+})
+
+export const getOnePokemon = createAsyncThunk(
+  "pokemon/getOnePokemon",
+  async (id: number) => {
+    return [(await pokaxios.get("/pokemon/" + id)).data]
+  }
+)
+
+export const getManyPokemon = createAsyncThunk(
+  "pokemon/getManyPokemon",
+  async (ids: string[]) => {
+    return Promise.all(
+      ids.map(async (id) => (await pokaxios.get("/pokemon/" + id)).data)
+    )
+  }
+)
+
+export const getPokemonSubset = createAsyncThunk(
+  "pokemon/getPokemonSubset",
+  async (args: { offset: number; limit: number }) => {
+    const response = await pokaxios.get(`/pokemon/`, {
+      data: args
+    })
+    const data = response.data as { results: { url: string }[] }
+    return Promise.all(data.results.map((item) => pokaxios.get(item.url)))
+  }
+)
+
+const pokemonLoaded = (state: State, { payload }: PayloadAction<Pokemon[]>) => {
+  payload.forEach((item) => {
+    state[item.id] = item
+  })
+}
+
+const slice = createSlice({
+  name: "pokemon",
+  initialState: {} as State,
+  reducers: {},
+  extraReducers: {
+    [getOnePokemon.fulfilled.type]: pokemonLoaded,
+    [getManyPokemon.fulfilled.type]: pokemonLoaded
+  }
+})
+
+export default slice.reducer
