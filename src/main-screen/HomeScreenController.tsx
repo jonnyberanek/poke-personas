@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { RootState } from "../store"
+import store, { RootState } from "../store"
 import {
   BlockState,
   MainScreenSchemaItem,
@@ -15,12 +15,11 @@ interface User {
   numVisits: number
 }
 
-class HomeScreenSchemaService {
+export class HomeScreenSchemaService {
   static generateHash = () => new Date().getMinutes().toString()
+  static isHashFresh = (hash: string) => this.generateHash() === hash
 
   static determineSchema(user: User): MainScreenSchemaItem[] {
-    const hash = this.generateHash()
-
     if (user.numVisits < 2) {
       return [
         {
@@ -89,7 +88,7 @@ export const BlockController: React.FC<BlockControllerProps> = () => {
   return (
     <div>
       {blockRenderConfigList.map(({ block: Block, args }, id) => (
-        <Block {...{ id, args }} />
+        <Block key={id} {...{ id, args }} />
       ))}
     </div>
   )
@@ -101,9 +100,14 @@ export const HomeScreenController: React.FC<HomeScreenControllerProps> = () => {
   const dispatch = useDispatch()
 
   useEffect(() => {
+    const { hash, schema: existingSchema } = store.getState().mainScreen
+    console.log(hash)
+
+    if (existingSchema && HomeScreenSchemaService.isHashFresh(hash)) return
+
     const schema = HomeScreenSchemaService.determineSchema({
       id: "1234231412",
-      numVisits: 5,
+      numVisits: 1,
       age: 23
     })
     dispatch(schemaInitialized(schema))

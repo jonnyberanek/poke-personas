@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
+import { HomeScreenSchemaService } from "../main-screen/HomeScreenController"
 
 export type MainScreenSchemaItem = { type: string; params: any }
 export type BlockState = { data: any }
@@ -23,6 +24,7 @@ const slice = createSlice({
       { payload }: PayloadAction<MainScreenSchemaItem[]>
     ) => {
       state.schema = payload
+      state.hash = HomeScreenSchemaService.generateHash()
     },
     blockInitialized: (state, { payload }: PayloadAction<number>) => {
       state.blocks[payload] = null

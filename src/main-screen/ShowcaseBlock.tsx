@@ -47,8 +47,6 @@ const ShowcaseBlock: React.FC<ShowcaseBlockProps> = ({
     }
   }, [pokemon, pokemonId])
 
-  console.log(pokemon)
-
   if (!pokemon?.sprites) return null
 
   return <ShowcasePokemonItem pokemon={pokemon} />
