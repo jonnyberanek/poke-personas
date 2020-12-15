@@ -1,42 +1,34 @@
-import React, { useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { getManyPokemon, getOnePokemon } from "../store/pokemon";
-import ShowcasePokemonItem from "../components/ShowcasePokemonItem";
-import { RootState } from "../store";
+import React, { useMemo } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { getManyPokemon, getOnePokemon } from "../store/pokemon"
+import ShowcasePokemonItem from "../components/ShowcasePokemonItem"
+import { RootState } from "../store"
+import { BlockController } from "./HomeScreenController"
+import ShowcaseBlock from "./ShowcaseBlock"
 
-const POKE_ID = 13;
-const LIST = [20, 21, 22, 23, 24];
+const POKE_ID = 13
+const LIST = [20, 21, 22, 23, 24]
 
 const MainScreen = () => {
-  const dispatch = useDispatch();
-
-  const showcasePokemon = useSelector((state: RootState) => {
-    return state.pokemon[POKE_ID];
-  });
-
-  React.useEffect(() => {
-    if (showcasePokemon === undefined) {
-      dispatch(getOnePokemon(POKE_ID));
-    }
-  }, [showcasePokemon]);
-
-  const pokemonList = useSelector(({ pokemon }: RootState) => {
-    return LIST.map((id) => pokemon[id]);
-  });
-
-  const isLoaded = useMemo(
-    () => pokemonList.every((x, i) => LIST[i] === x?.id),
-    [pokemonList]
-  );
-
-  React.useEffect(() => {
-    if (isLoaded) return;
-    dispatch(getManyPokemon(LIST));
-  }, [isLoaded]);
-
   return (
     <div>
-      {showcasePokemon && <ShowcasePokemonItem pokemon={showcasePokemon} />}
+      <BlockController
+        list={[
+          {
+            block: ShowcaseBlock,
+            args: { pokemonId: 1 }
+          },
+          {
+            block: ShowcaseBlock,
+            args: { pokemonId: 4 }
+          },
+          {
+            block: ShowcaseBlock,
+            args: { pokemonId: 7 }
+          }
+        ]}
+      />
+      {/* {showcasePokemon && <ShowcasePokemonItem pokemon={showcasePokemon} />}
       {isLoaded &&
         pokemonList.map((item, i) => {
           return (
@@ -56,9 +48,9 @@ const MainScreen = () => {
               <span>{item.name}</span>
             </div>
           );
-        })}
+        })} */}
     </div>
-  );
-};
+  )
+}
 
-export default MainScreen;
+export default MainScreen
