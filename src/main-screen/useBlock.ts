@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from "react"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
+import { RootState } from "../store"
 import { blockInitialized, blockDataLoaded } from "../store/mainScreen"
 
 export type BlockComponentProps<A = any> = {
@@ -12,12 +13,15 @@ type UseBlockArgs = {
 }
 
 const useBlock = ({ id }: UseBlockArgs) => {
-  const dispatch = useDispatch()
+  // const dispatch = useDispatch()
 
-  useEffect(() => {
-    // On mount, run that this block has been initialized
-    dispatch(blockInitialized(id))
-  }, [id])
+  // const block = useSelector((state: RootState) => state.mainScreen.blocks[id])
+
+  // useEffect(() => {
+  //   if (!block)
+  //     // On mount, run that this block has been initialized
+  //     dispatch(blockInitialized(id))
+  // }, [id, block])
 
   const setData = useCallback((data: any) => blockDataLoaded({ id, data }), [
     id

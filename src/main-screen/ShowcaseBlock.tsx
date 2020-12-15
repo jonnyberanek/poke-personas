@@ -28,6 +28,14 @@ const pokaxios = axios.create({
   baseURL: "https://pokeapi.co/api/v2"
 })
 
+// Mocking slow loading time
+const getPokemonById = (id: number) =>
+  new Promise((res, rej) => {
+    setTimeout(async () => {
+      res([(await pokaxios.get("/pokemon/" + id)).data])
+    }, 1000)
+  })
+
 const ShowcaseBlock: React.FC<ShowcaseBlockProps> = ({
   id,
   args: { pokemonId }
@@ -40,7 +48,7 @@ const ShowcaseBlock: React.FC<ShowcaseBlockProps> = ({
   useEffect(() => {
     if (!pokemon) {
       dispatch(async (dispatch: Dispatch) => {
-        const items = [(await pokaxios.get("/pokemon/" + pokemonId)).data]
+        const items = await getPokemonById(pokemonId)
         dispatch(pokemonLoaded(items))
         dispatch(setData(pokemonId))
       })

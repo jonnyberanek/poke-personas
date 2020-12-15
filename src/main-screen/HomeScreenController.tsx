@@ -39,6 +39,30 @@ export class HomeScreenSchemaService {
       return [
         {
           type: "showcase",
+          params: { pokemonId: 1 }
+        },
+        {
+          type: "showcase",
+          params: { pokemonId: 4 }
+        },
+        {
+          type: "showcase",
+          params: { pokemonId: 7 }
+        },
+        {
+          type: "showcase",
+          params: { pokemonId: 2 }
+        },
+        {
+          type: "showcase",
+          params: { pokemonId: 5 }
+        },
+        {
+          type: "showcase",
+          params: { pokemonId: 8 }
+        },
+        {
+          type: "showcase",
           params: { pokemonId: 3 }
         },
         {
@@ -73,6 +97,9 @@ interface BlockControllerProps {
   // list: BlockRenderConfig[]
 }
 
+// For determining how many items to load at a time when able to
+const NEW_LOAD_BATCH = 2
+
 export const BlockController: React.FC<BlockControllerProps> = () => {
   // const dispatch = useDispatch()
 
@@ -83,13 +110,19 @@ export const BlockController: React.FC<BlockControllerProps> = () => {
     return HomeScreenSchemaService.mapSchema(schema)
   }, [schema])
 
+  const allLoaded = useSelector((state: RootState) => {
+    return Object.values(state.mainScreen.blocks).filter((x) => !!x)
+  })
+
   if (!blockRenderConfigList) return null
 
   return (
     <div>
-      {blockRenderConfigList.map(({ block: Block, args }, id) => (
-        <Block key={id} {...{ id, args }} />
-      ))}
+      {blockRenderConfigList
+        .slice(0, allLoaded.length + NEW_LOAD_BATCH)
+        .map(({ block: Block, args }, id) => (
+          <Block key={id} {...{ id, args }} />
+        ))}
     </div>
   )
 }
@@ -101,13 +134,12 @@ export const HomeScreenController: React.FC<HomeScreenControllerProps> = () => {
 
   useEffect(() => {
     const { hash, schema: existingSchema } = store.getState().mainScreen
-    console.log(hash)
 
     if (existingSchema && HomeScreenSchemaService.isHashFresh(hash)) return
 
     const schema = HomeScreenSchemaService.determineSchema({
       id: "1234231412",
-      numVisits: 1,
+      numVisits: 7,
       age: 23
     })
     dispatch(schemaInitialized(schema))
