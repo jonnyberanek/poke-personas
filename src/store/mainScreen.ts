@@ -1,13 +1,29 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 
+export type MainScreenSchemaItem = { type: string; params: any }
+export type BlockState = { data: any }
+
+type MainScreenState = {
+  hash: string
+  schema: MainScreenSchemaItem[] | null
+  blocks: { [id: number]: BlockState | null }
+}
+
 const slice = createSlice({
   name: "mainScreen",
   initialState: {
     hash: "",
-    blocks: {} as { [id: number]: any }
+    schema: null,
+    blocks: {}
     // order: []
-  },
+  } as MainScreenState,
   reducers: {
+    schemaInitialized: (
+      state,
+      { payload }: PayloadAction<MainScreenSchemaItem[]>
+    ) => {
+      state.schema = payload
+    },
     blockInitialized: (state, { payload }: PayloadAction<number>) => {
       state.blocks[payload] = null
     },
@@ -20,5 +36,9 @@ const slice = createSlice({
   }
 })
 
-export const { blockInitialized, blockDataLoaded } = slice.actions
+export const {
+  blockInitialized,
+  blockDataLoaded,
+  schemaInitialized
+} = slice.actions
 export default slice.reducer

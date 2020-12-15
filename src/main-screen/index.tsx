@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { getManyPokemon, getOnePokemon } from "../store/pokemon"
 import ShowcasePokemonItem from "../components/ShowcasePokemonItem"
 import { RootState } from "../store"
-import { BlockController } from "./HomeScreenController"
+import { BlockController, HomeScreenController } from "./HomeScreenController"
 import ShowcaseBlock from "./ShowcaseBlock"
 
 const POKE_ID = 13
@@ -12,22 +12,7 @@ const LIST = [20, 21, 22, 23, 24]
 const MainScreen = () => {
   return (
     <div>
-      <BlockController
-        list={[
-          {
-            block: ShowcaseBlock,
-            args: { pokemonId: 1 }
-          },
-          {
-            block: ShowcaseBlock,
-            args: { pokemonId: 4 }
-          },
-          {
-            block: ShowcaseBlock,
-            args: { pokemonId: 7 }
-          }
-        ]}
-      />
+      <HomeScreenController />
       {/* {showcasePokemon && <ShowcasePokemonItem pokemon={showcasePokemon} />}
       {isLoaded &&
         pokemonList.map((item, i) => {
